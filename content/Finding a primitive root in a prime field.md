@@ -1,3 +1,11 @@
+---
+title: Finding a primitive root in a prime field
+draft: false
+tags:
+  - math
+  - number-theory
+---
+
 Let's fix a prime field $\mathbb{F}_p$ for prime $p$. Knowing a generator $g$ of $\mathbb{F}_p^\times$, $g^{(p-1)/k}$ is a primitive $k$-th root of unity in the field. But how to find a primitive root without a generator of $\mathbb{F}_p^\times$?
 
 1. For $n$ and $m$ relatively prime, the product of a primitive $n$-th root of unity $\zeta_n$ and a primitive $m$-th root of unity $\zeta_m$ is a primitive $nm$-th root of unity.

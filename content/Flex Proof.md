@@ -1,3 +1,11 @@
+---
+title: Flex Proof
+draft: false
+tags:
+  - math
+  - analysis
+---
+
 In December 2020, as part of an Information Theory class, we encountered a question in a homework assignment prompting us to demonstrate that $\int_0^{\infty}(\frac{1-\cos x}{x})^2 dx = \pi /2$.
 Our teacher refrained from grading it upon realizing its impossibility to solve within the recommended time. However, I gained insight into a solution by utilizing Wolfram Alpha. Although I cannot recall the exact method employed to gain the insight (probably through the iterative examination of function graphs), the proof unfolded as follows:
 
