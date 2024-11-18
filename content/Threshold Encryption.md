@@ -52,7 +52,7 @@ Each node $i$ can compute a verification key share in $G_1$ by computing $Y_i'=[
 
 $$ Y'= \sum_{i\in S} [L_{S, i}(0)] Y_i= \sum_{i\in S} [L_{S, i}(0) f(i)] g_1 = [f(0)]g_1.$$ 
 
-One can check that the verification key share in $G_1$ matches the one in $G_2$ with the pairing check for \\( \alpha \stackrel{\$}{\gets}  F_r^{\times}\\):
+One can check that the verification key share in $G_1$ matches the one in $G_2$ with the pairing check for $$\alpha \stackrel{﹩}{\gets}  F_r^{\times}$$:
 
 $$e(Y'+\sum_i \alpha^i Y_i', g_2)\stackrel{?}{=} e(g_1, Y+\sum_i \alpha^i Y_i).$$
 
