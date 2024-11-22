@@ -8,4 +8,4 @@ draft: false
 Occupation: Cryptography Engineer, Nomadic Labs (2022 - present)
 
 
-This website contains some notes about [math](./tags/cryptography) and [cryptography](./tags/cryptography).
+This website contains some notes about [math](./tags/math) and [cryptography](./tags/cryptography).
