@@ -386,8 +386,11 @@ On an M2 Pro chip, `cargo bench` yields the following running times:
 | 100 | 42 s   |   3 ms | 92 µs |
 | 200 | 80 s   |   3 ms | 182 µs |
 | 1000 | 392 s   |   3 ms | 921 µs |
+| 4000 | 25 min 7 s   |   3 ms | 3.6 ms |
+
+
 
 
 Note that the verifier’s run-time cost remains constant because Plonky2 generates SNARK proofs, which can be verified in constant time.
 
-For shorter hash chains (less than ~3000 in length), computing the chain natively is faster than verifying the SNARK proof. However, from a bandwidth perspective, verifying the SNARK proof is more efficient since the intermediate data used in the hash chain doesn't need to be transmitted, and the SNARK proof is constant-sized (around 43 kB). This is especially useful in blockchain contexts, where validators would otherwise need to download the entire chain to verify it. With recursive SNARKs, validators can be convinced of the chain’s correctness by only receiving a proof for the latest state, without needing the full chain history. This approach is used by the [Mina](https://minaprotocol.com) blockchain.
+For shorter hash chains (less than ~4000 in length), computing the chain natively is faster than verifying the SNARK proof. However, from a bandwidth perspective, verifying the SNARK proof is more efficient since the intermediate data used in the hash chain doesn't need to be transmitted, and the SNARK proof is constant-sized (around 43 kB). This is especially useful in blockchain contexts, where validators would otherwise need to download the entire chain to verify it. With recursive SNARKs, validators can be convinced of the chain’s correctness by only receiving a proof for the latest state, without needing the full chain history. This approach is used by the [Mina](https://minaprotocol.com) blockchain.
