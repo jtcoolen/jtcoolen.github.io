@@ -50,7 +50,7 @@ By contrast, a publicly verifiable, non-interactive DKG solves these issues and 
 
 # General framework
 
-The non-interactive verifiable secret sharing scheme presented in the paper [Non-interactive VSS using Class Groups and Application to DKG](https://eprint.iacr.org/2023/451.pdf) follows the folklore technique where shares are encrypted by a single dealer for a set of recipients, accompanied by a non-interactive proof of correct sharing. This ensures that each recipient can independently verify the correctness of their share without interaction.
+The non-interactive verifiable secret sharing scheme presented in the paper [Non-interactive VSS using Class Groups and Application to DKG](https://eprint.iacr.org/2023/451.pdf) follows the folklore technique where shares are encrypted by a single dealer for a set of recipients, accompanied by a non-interactive proof of correct sharing. This ensures that each recipient can independently verify the correctness of their share and the other shares without interaction.
 
 To transform non-interactive Verifiable Secret Sharing (NI-VSS) into a non-interactive DKG, each participant acts as a dealer and independently runs a non-interactive VSS (NI-VSS) protocol with their own secret. Once all participants have completed this process, the final share of each party is computed as a linear combination of their own share and the shares received from others, by leveraging the homomorphic property of Shamir secret sharings.
 
