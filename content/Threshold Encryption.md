@@ -5,6 +5,8 @@ tags:
   - math
   - cryptography
   - pairing-based cryptography
+  - threshold cryptography
+  - threshold encryption
 ---
 
 
