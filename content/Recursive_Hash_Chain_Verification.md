@@ -394,3 +394,133 @@ On an M2 Pro chip, `cargo bench` yields the following running times:
 Note that the verifier’s run-time cost remains constant because Plonky2 generates SNARK proofs, which can be verified in constant time.
 
 For shorter hash chains (less than ~4000 in length), computing the chain natively is faster than verifying the SNARK proof. However, from a bandwidth perspective, verifying the SNARK proof is more efficient since the intermediate data used in the hash chain doesn't need to be transmitted, and the SNARK proof is constant-sized (around 43 kB). This is especially useful in blockchain contexts, where validators would otherwise need to download the entire chain to verify it. With recursive SNARKs, validators can be convinced of the chain’s correctness by only receiving a proof for the latest state, without needing the full chain history. This approach is used by the [Mina](https://minaprotocol.com) blockchain.
+
+# Optimization: several Poseidon calls per circuit
+
+The previous approach is rather inefficient as it does the maximum number of recursion steps. We can instead pack several calls (let's try one thousand) to the Poseidon hash function per recursion step to amortize the cost of recursion:
+```diff
+diff --git a/benches/poseidon.rs b/benches/poseidon.rs
+index 561ccdc..d300321 100644
+--- a/benches/poseidon.rs
++++ b/benches/poseidon.rs
+@@ -12,14 +12,12 @@ criterion_group! {
+ criterion_main!(recursive_snark);
+
+ fn bench_recursive_snark_prove(c: &mut Criterion) {
+-    let depths = vec![10, 20];
++    let depths = vec![30];
+
+     for d in depths {
+         let mut group = c.benchmark_group(format!("Plonky2-Poseidon-num-steps-{}", d));
+         group.sample_size(10);
+
+-        let d = d - 1;
+-
+         group.bench_function("Prove", |b| {
+             b.iter(|| {
+                 let initial_hash = generate_random_hash();
+@@ -36,7 +34,7 @@ fn bench_recursive_snark_prove(c: &mut Criterion) {
+ }
+
+ fn bench_recursive_snark_verify(c: &mut Criterion) {
+     let depths = vec![10; 20];
+
+     for d in depths {
+         let mut group = c.benchmark_group(format!("Plonky2-Poseidon-num-steps-{}", d));
+diff --git a/src/circuit.rs b/src/circuit.rs
+index 378594e..ad5a1c6 100644
+--- a/src/circuit.rs
++++ b/src/circuit.rs
+@@ -73,20 +73,29 @@ pub fn setup_circuit(depth: usize) -> Result<CircuitSetup<GoldilocksField, C, D>
+     let initial_hash_target = builder.add_virtual_hash();
+     builder.register_public_inputs(&initial_hash_target.elements);
+
++    let one = builder.one();
++    let mut count = counter;
++    let mut n_iter = builder.zero();
++
+     let current_hash_in = builder.add_virtual_hash();
+
+     // Hash the current depth and the previous hash (inner_cyclic_latest_hash or initial hash)
+-    let current_hash_out = builder.hash_n_to_hash_no_pad::<PoseidonHash>(
+-        [[counter].to_vec(), current_hash_in.elements.to_vec()].concat(),
+-    );
+-    builder.register_public_inputs(&current_hash_out.elements);
++
++    let mut intermediate_hash = current_hash_in;
++    for _i in 0..1_000 {
++        intermediate_hash = builder.hash_n_to_hash_no_pad::<PoseidonHash>(
++            [[count].to_vec(), intermediate_hash.elements.to_vec()].concat(),
++        );
++        count = builder.add(count, one);
++        n_iter = builder.add(n_iter, one);
++    }
++
++    builder.register_public_inputs(&intermediate_hash.elements);
+
+     let verifier_data_target = builder.add_verifier_data_public_inputs();
+
+     let condition = builder.add_virtual_bool_target_safe();
+
+-    let one = builder.one();
+-
+     let mut common_data = common_data::<F, C, D>();
+     common_data.num_public_inputs = builder.num_public_inputs();
+
+@@ -100,7 +109,7 @@ pub fn setup_circuit(depth: usize) -> Result<CircuitSetup<GoldilocksField, C, D>
+         current_hash_in,
+         &inner_cyclic_proof_with_pis,
+         counter,
+-        one,
++        n_iter,
+     )?;
+
+     // If condition is true, verifies the provided inner proof against the current state.
+@@ -133,7 +142,7 @@ fn connect_proof_hash_states(
+     current_hash_in: HashOutTarget,
+     inner_cyclic_proof_with_pis: &ProofWithPublicInputsTarget<D>,
+     counter: Target,
+-    one: Target,
++    n_iter: Target,
+ ) -> Result<()> {
+     let inner_cyclic_pis = &inner_cyclic_proof_with_pis.public_inputs;
+
+@@ -162,7 +171,7 @@ fn connect_proof_hash_states(
+
+     // Update counter by adding 1 to inner_cyclic_counter if the condition is true.
+     // Otherwise, the counter remains unchanged.
+-    let new_counter = builder.mul_add(condition.target, inner_cyclic_counter, one);
++    let new_counter = builder.mul_add(condition.target, inner_cyclic_counter, n_iter);
+     builder.connect(counter, new_counter);
+
+     Ok(())
+diff --git a/src/hash_chain.rs b/src/hash_chain.rs
+index ed054cb..deafa5a 100644
+--- a/src/hash_chain.rs
++++ b/src/hash_chain.rs
+@@ -23,7 +23,7 @@ pub fn hash_chain<F: RichField>(initial_state: [F; 4], n: usize) -> [F; 4] {
+     // Use fold to iterate from 1 to n and accumulate the hash state
+     (1..=n).fold(initial_state, |current, i| {
+         hash_n_to_hash_no_pad::<F, PoseidonPermutation<F>>(
+-            &[F::from_canonical_u32(i as u32)]
++            &[F::from_canonical_u32(999 + i as u32)]
+                 .iter()
+                 .chain(current.iter())
+                 .copied()
+diff --git a/src/lib.rs b/src/lib.rs
+index e7e3062..64b2ff4 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -25,8 +25,9 @@ pub fn recursive_proof(
+         ))?;
+     }
+
++    let circuit_setup = setup_circuit(depth)?;
++
+     let adjusted_depth = depth - 1; // for zero-based indexing
+-    let circuit_setup = setup_circuit(adjusted_depth)?;
+
+     let proof = build_recursive_proof(adjusted_depth, initial_hash, &circuit_setup)?;
+```
+
+With this simple change, we're proving a hash chain of length 30,000 in 14 seconds!
