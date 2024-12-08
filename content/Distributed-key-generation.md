@@ -74,6 +74,9 @@ See [Castagnos-Laguillaumie (CL) linearly homomorphic encryption scheme](Castagn
 
 For the class group arithmetic we propose two backends: GMP and [rust crypto](https://github.com/RustCrypto/crypto-bigint). The latter supports fixed-width big integers with mostly constant-time operations: with a security level of 112 we can support up to 3 multiplications of 1348-bit (size of the discriminant) integers fitting inside 4096-bit ints
 
+
+TODO evaluate https://github.com/hacl-star/hacl-star/blob/afromher_rs/dist/rs/bignum/bignum4096.rs
+
 ## NIZK proof of correct Shamir secret sharing
 
 We're given a vector of encryptions of scalars $(s_1, \dots, s_n)$ supposedly forming Shamir secret sharing: $\vec{E}=\{ f^{s_i} h_i^r  \}_i$ along with a shared portion of the ciphertext $R=g_q^r$.
