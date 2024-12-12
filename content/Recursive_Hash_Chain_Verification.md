@@ -116,6 +116,8 @@ Notably, it ensures that the output hash of the current proof is constructed as 
 concatenated with the input hash of the current proof.
 The inputs of the proof for level $t$ correspond to the outputs of the inner proof for level $t-1$. So that there is only one proof to verify, the inner proof appears as an input of the current proof.
 
+The critical part is the call to the function `conditionally_verify_cyclic_proof_or_dummy` which adds the verification circuit for the current circuit, allowing to verify the inner proof in-circuit.
+
 ```rust
 use anyhow::{Ok, Result};
 
@@ -195,7 +197,7 @@ pub fn setup_circuit(depth: usize) -> Result<CircuitSetup<GoldilocksField, C, D>
         one,
     )?;
 
-    // If condition is true, verifies the provided inner proof against the current state.
+    // If condition is true, verifies the provided inner proof with the current circuit.
     // If condition is false, uses a dummy verification, allowing the circuit to gracefully
     // handle cases where recursion should not proceed.
     builder.conditionally_verify_cyclic_proof_or_dummy::<C>(
@@ -475,7 +477,7 @@ index 378594e..ad5a1c6 100644
 +        n_iter,
      )?;
 
-     // If condition is true, verifies the provided inner proof against the current state.
+     // If condition is true, verifies the provided inner proof with the current circuit.
 @@ -133,7 +142,7 @@ fn connect_proof_hash_states(
      current_hash_in: HashOutTarget,
      inner_cyclic_proof_with_pis: &ProofWithPublicInputsTarget<D>,
