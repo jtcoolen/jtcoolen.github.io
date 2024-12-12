@@ -373,6 +373,8 @@ pub fn build_recursive_proof(
 
 ```
 
+A useful feature is that updating the proof as the hash chain grows is relatively straightforward: you simply need to continue generating SNARK proofs that verify one or more hash operations on the current state of the hash chain and that the verifier circuit correctly verifies the previous SNARK proof from the prior step. Hence the term _incremental_ in Incrementally Verifiable Computation (IVC).
+
 
 # Benchmarks
 
