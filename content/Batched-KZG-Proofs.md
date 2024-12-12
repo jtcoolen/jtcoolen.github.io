@@ -44,6 +44,41 @@ To see that this reduces to the discrete log, notice that if the adversary produ
 So the equation is correct on the polynomial, and we have $R = \bar{R} \mod Z$ 
 However, the adversary if crafting a proof for a false statement we have $\bar{R}$ which is not the remainder of $f/Z$ (by the same reasoning as in the correctness). By construction we also have $deg(\bar{R}) = n-1$. This is a contradiction. So the adversary managed to solved a discrete log.
 
+
+---
+More formally, to prove the evaluation binding, we need to reduce the problem to the $t$-bilinear strong Diffie-Hellman assumption which slightly extends the $t$-SDH assumption:
+
+### $t$-bilinear strong Diffie-Hellman assumption
+> Let $\mathbb{G}$ be an abelian group and $g\in\mathbb{G}$, for any adversary $\mathcal{A}$:
+>
+> $$P \{(c,e(g,g)^{1/(\alpha+c)})\gets\mathcal{A}(g,g^\alpha,\dots, g^{\alpha^t})\in\mathbb{G}^{t+1}\}=\epsilon(\lambda)$$,
+> for $c\in \mathbb{Z}_p \setminus \{ \alpha \}$.
+
+### Evaluation binding
+> By reduction to the $t$-BSDH assumption, suppose an adversary $\mathcal{A}$, given a trusted setup $\textsf{PK}$, outputs two different valid witness tuples $(c,Z,Y,\pi_{f(Z)=Y}=[Q(\alpha)]_1)$ and $(c,z', y',\pi_{f(z')=y'}=[q(\alpha)]_1)$. Let's call $r(x)$ the interpolated polynomial from the values of $Y$. By assumption, $\textsf{VerifyEvalBatch}(\textsf{PK},c,Z,Y,\pi_{f(Z)=Y})=1$, $\textsf{VerifyEval}(\textsf{PK}, c, z',y',\pi_{f(z')=y'})=1$, with $z'\in Z$ and $r(z')\neq y'$.
+> Let's set $p(x)=\prod_{z\in Z} (x-z)$ and $p'(x)=p(x)/(x-z')$. By the correctness of the scheme,
+> $$
+>    e(c-[y']_1,g_2)=e(\pi_{f(z')=y'}, [\alpha-z']_2)
+> $$
+> and
+> $$
+> e(c-[r(\alpha)]_1,g_2)=e(\pi_{f(Z)=Y}, [p(\alpha)]_2).
+> $$
+> So that $f(\alpha)-y'=q(\alpha)(\alpha-z')$ and
+> $f(\alpha)-r(\alpha) = Q(\alpha)p(\alpha)$, which entails $ q(\alpha)(\alpha-'z)+y' = Q(\alpha)p(\alpha)+r(\alpha)$.
+> Factoring by  $(\alpha-z')$ we obtain
+> $$ (\alpha - z') (q(\alpha) - Q(\alpha)p'(\alpha)) = r(\alpha) - y' $$
+> We're almost there but we can't compute $r(\alpha)$, so we rewrite the expression using the Euclidean division $r(x)=r'(x)(x-z)+r(z)$:
+> $$ (\alpha - z') (q(\alpha) - Q(\alpha)p'(\alpha)) = r'(\alpha)(\alpha-z')+r(z') - y'. $$
+> With a bit of algebra ($r(z')\neq y'$)
+> $$
+>      (\alpha - z')^{-1} = \frac{q(\alpha) - Q(\alpha)p'(\alpha) -r'(\alpha)}{r(z') - y'}.
+> $$
+> Hence the need for a pairing to be able to multiply  $Q(\alpha)$ and $p'(\alpha)$ in $\mathbb{G}_T$.
+> A solution to the $t$-BSDH instance is given by $-z'$, and for example
+> $$ (\alpha- z')^{-1}e(g_1,g_2)=(r(z') - y')^{-1} e(\pi_{f(z')=y'}-[r'(\alpha)]_1 , g_2) e(-\pi_{f(Z)=Y}, [p'(\alpha)]_2).$$
+---
+
 Note that in the next proofs, we will assume that everything that is verified in the pairing equations is true for the corresponding polynomial equation. The same reduction to discrete log applies.
 
 ### Performance
