@@ -11,7 +11,7 @@ tags:
 
 Arithmetization is the process by which a computer program is transformed into a set of polynomial equations for use in a zero-knowledge proof system. There are four main methods:
 
-- R1CS: quadratic rank-1 constraint system, systems of equations, at most quadratic in each variable, of the form, for $\boldsymbol{A},\boldsymbol{B},\boldsymbol{C}\in (F^n)^3,\boldsymbol{z}\in F^n$, $\cdot$ the scalar dot product: $(\boldsymbol{A} \cdot \boldsymbol{z}) \times (\boldsymbol{B} \cdot \boldsymbol{z}) - (\boldsymbol{C} \cdot \boldsymbol{z}) = \boldsymbol{0}$.
+- R1CS: quadratic rank-1 constraint system, systems of equations, at most quadratic in each variable, of the form, for $\boldsymbol{a},\boldsymbol{b},\boldsymbol{c}\in (F^n)^3,\boldsymbol{z}\in F^n$, $\cdot$ the scalar dot product: $(\boldsymbol{a} \cdot \boldsymbol{z}) \times (\boldsymbol{b} \cdot \boldsymbol{z}) - (\boldsymbol{c} \cdot \boldsymbol{z}) = \boldsymbol{0}$.
 - PlonK: system of equations of the form $q_l a + q_r b + q_o c + q_m a b + q_c=0$ (models arithmetic gates for addition, multiplication, addition by a constant)
     - $q_l,q_r,q_o,q_m,q_c$ are called selectors, for the left input, the right input, the output, the multiplication, the constant term in an arithmetic gate
     - One can also extend the equations (custom gates): by adding a cubic term, using more than three wires (two inputs and one output), more than one constraint...
