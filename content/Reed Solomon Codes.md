@@ -61,6 +61,9 @@ Indeed:
 $$ A'(x)= (\prod_{i=0}^{k-1} (x-x_i))' = \sum_{i=0}^{k-1} (x-x_i)' \prod_{\substack{j=0\\ j\neq i}}^{k-1} (x-x_j)=\sum_{j=0}^{k-1}  A_j(x).$$
 So $A'(x_i)=\sum_{j=0}^{k-1} A_j(x_i)=A_i(x_i)$ as the other polynomials $A_j(x)$ have $x_i$ as root.
 
+The resulting expression corresponds to the [barycentric formula](https://dankradfeist.de/ethereum/2021/06/18/pcs-multiproofs.html#evaluating-a-polynomial-in-evaluation-form-on-a-point-outside-the-domain).
+
+
 Writing the fraction $\frac{1}{x_i-x}=\sum_{j=0}^{\infty} \frac{x^j}{x_i^{j+1}}$ as a formal power series, we obtain
 $$
 \begin{align*}
