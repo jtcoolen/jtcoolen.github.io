@@ -14,6 +14,6 @@ Different types of methods:
 + __Recursion__: Proof-Carrying Data (PCD) or [IVC](Recursive_Hash_Chain_Verification); Given a proof, a state, and a transformation, computes a new proof.
 
 - Folding combines witnesses whereas aPlonK combines commitments.
-- Folding better than aPlonK (whose verifier requires $\log n$ operation on $G_t$) or accumulation in general.
+- Folding better than aPlonK (whose verifier requires for $k$ proofs to aggregate $\log k$ operation on $G_t$) or accumulation in general.
 - Folding interesting when proving several instances of the same statement at the same time.
 - If a verification function is too long or a proof is too large, one try to make a proof of a proof. For example, prove a STARK (with a non-constant proof and verification function) using Groth16 (3 group elements, verification function of 2 pairings).
