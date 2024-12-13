@@ -8,11 +8,11 @@ tags:
 ---
 
 
-TODO.
+TODO. See https://www.maya-zk.com/blog/plonk-overview.
 
-See arithmetization (PlonK).
-See KZG Polynomial commitment.
-See Fiat-Shamir.
+See [arithmetization](Constraint-Systems).
+See [KZG](KZG-Polynomial-Commitments) polynomial commitment.
+See [Fiat-Shamir](FS).
 
 Copy constraints (one has to assert equalities between the values from the circuit's wires to connect the arithmetic gates). We do so using a permutation argument, by building a permutation polynomial that can be verified.
 
