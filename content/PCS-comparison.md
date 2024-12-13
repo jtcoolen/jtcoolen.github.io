@@ -22,5 +22,11 @@ For a degree-$d$ polynomial:
 | Proving time   | $O(d \log²d)$         | $O(d)$ | $O(d)$     | $O(d)$   |
 | Verification time  | $O(\log² d)$           | $O(1)$  | $O(\log d)$ | $O(\log d)$ |
 
+In practice, for post-quantum secure polynomial commitment schemes:
+- degree ~1: see TCitH-GGM (Seed trees)
+- degree ~10: degree-enforcing commitment (TCitH-MT)
+- degree: 1,000: Merkle Tree with Ligero-like proximity tests
+- degree 10,000: FRI-based commitments
+
 
 [^1]: Succinct is not really well-defined: can either mean polylog or constant.
